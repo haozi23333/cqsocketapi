@@ -64,6 +64,12 @@ void prcsDiscussMessage(const char *payload) {
 	CQ_sendDiscussMsg(appAuthCode, id, decodedText);
 }
 
+void prscLike(const char *payload) {
+	int64_t id;
+	sscanf_s(payload, "%I64d", &id, sizeof(char) * FRAME_PAYLOAD_SIZE);
+	CQ_sendLike(appAuthCode,id);
+}
+
 void prcsUnknownFramePrefix(const char *buffer) {
 	char category[] = "UnknownFramePrefix";
 	CQ_addLog(appAuthCode, CQLOG_WARNING, category, buffer);
@@ -126,6 +132,10 @@ void APIServer::run()
 				prcsDiscussMessage(payload);
 				continue;
 			}
+			if (strcmp(prefix, "Like") == 0) {
+				prscLike(payload);
+			}
+
 			// Unknown prefix
 			prcsUnknownFramePrefix(buffer);
 		}
